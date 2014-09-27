@@ -1,5 +1,11 @@
 require 'sinatra'
+require 'sinatra/activerecord'
 require 'json'
+
+set :database, 'sqlite3:./db/quiz.db'
+
+class User < ActiveRecord::Base
+end
 
 get '*/js/:filename' do
   content_type 'application/javascript'
