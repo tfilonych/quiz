@@ -1,0 +1,13 @@
+@font-face {
+	font-family: 'Custom Key';
+	src: url('../fonts/custom_key.eot?ltobg9');
+	src: url('../fonts/custom_key.eot?#iefixltobg9') format('embedded-opentype'), url('../fonts/custom_key.woff?ltobg9') format('woff'), url('../fonts/custom_key.ttf?ltobg9') format('truetype'), url('../fonts/custom_key.svg?ltobg9#icomoon') format('svg');
+}
+
+.icon-key {
+	font-family: 'Custom Key';
+}
+
+.icon-key:before {
+	content: "\e600";
+}
