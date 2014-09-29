@@ -16,6 +16,25 @@
 		
 	});
 	
+	app.controller("ApplicationController", ["$http", "$scope", function($http, $scope){
+		var app = this;
+		this.username = "";
+		$http.get("/access")
+			.success(function(data){
+				app.username = data;
+			}).error(function(){
+				app.username = undefined;
+			});
+		$scope.$on("user_logged_in", function(event, data){
+			app.username = data;
+		});
+			
+		this.userLoggedIn = function(){
+			return (this.username != "") && (this.username != undefined);
+		};
+		
+	}]);
+	
 	app.controller("RegistrationController", ["$http", "$location", function($http, $location){
 		this.user = {};
 		this.cancel = function(){
@@ -29,7 +48,7 @@
 		};
 	}]);
 	
-	app.controller("LoginController", ["$location", "$http", function($location, $http){
+	app.controller("LoginController", ["$location", "$scope", "$http", function($location, $scope, $http){
 		var lgnCtrl = this;
 		this.user = {};
 		this.message = "";
@@ -41,6 +60,7 @@
 					.success(function(data){
 						$("#login").modal("hide");
 						$location.path("/");
+						$scope.$emit("user_logged_in", data);
 					})
 					.error(function(data){
 						lgnCtrl.message = "Invalid username and/or password!";
