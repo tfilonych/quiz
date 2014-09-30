@@ -32,6 +32,13 @@
 		this.userLoggedIn = function(){
 			return (this.username != "") && (this.username != undefined);
 		};
+		this.logout = function(){
+			$http.get("/logout")
+				.success(function(data){
+					app.username = undefined;
+				});
+			
+		};
 		
 	}]);
 	

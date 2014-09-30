@@ -7,14 +7,13 @@
 					<h3 class="text-center text-muted"><img class="logo" src="/img/trident.png" /> Система Пластових електронних опитників</h3>
 				</div>
 				<div class="col-lg-2 col-md-3 col-sm-2">
-					<!-- Comment ul / uncomment h1 to see key -->
 					<div class="dropdown" ng-show="appCtrl.userLoggedIn()">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><h4>{{appCtrl.username}} <span class="caret"></span></h4></a>
 						<ul class="dropdown-menu" role="menu">
-							<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Мій Кабінет</a></li>
-							<li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-toggle="modal" data-target="#login">Увійти</a></li>
+							<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Особистий кабінет</a></li>
+							<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Панель адміністратора</a></li>
 							<li role="presentation" class="divider"></li>
-							<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Вийти</a></li>
+							<li role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="appCtrl.logout()">Вийти</a></li>
 						</ul>
 					</div>
 					<a class="btn" href="#" data-toggle="modal" data-target="#login" ng-hide="appCtrl.userLoggedIn()"><h1><span class="glyphicon icon-key"> </span></h1></a>

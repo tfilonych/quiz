@@ -57,6 +57,11 @@ post '/login' do
     return [401, "unauthorized"]
 end
 
+get '/logout' do
+  session.delete(:user_id)
+  return [200, "ok"]
+end
+
 not_found do
   send_file 'public/index.html'
 end
