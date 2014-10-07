@@ -42,17 +42,27 @@
 		
 	}]);
 	
-	app.controller("RegistrationController", ["$http", "$location", function($http, $location){
+	app.controller("RegistrationController", ["$http", "$location", "$scope", function($http, $location, $scope){
 		this.user = {};
+		this.message = "";
 		this.cancel = function(){
 			$location.path("/");
 		};
-		this.submitRegistration = function(){
-			$http.post("/register", this.user)
-			.success(function(data){
-				$location.path("/");
-			});
+		
+		this.checkPassword = function () {
+               $scope.regform.password_confirmation.$error.dontMatch = $scope.regform.password.$viewValue !== $scope.regform.password_confirmation.$viewValue;
 		};
+		this.submitRegistration = function(){
+            $scope.regform.submitted = false;
+            if ($scope.regform.$valid) {
+                $http.post("/register", this.user)
+                    .success(function(data){
+                        $location.path("/");	
+                    });
+            } else {
+                $scope.regform.submitted = true;
+            }
+        };
 	}]);
 	
 	app.controller("LoginController", ["$location", "$scope", "$http", function($location, $scope, $http){
