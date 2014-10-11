@@ -2,7 +2,8 @@
 	<div class="col-md-2"></div>
 	<div class="col-md-8">
 		<h3 class="text-center">Реєстрація</h3>
-		<form class="form-horizontal" role="form" name="regform" ng-submit="reg.submitRegistration()" novalidate="">
+		<form class="form-horizontal" role="form" name="regform" ng-submit="reg.submitRegistration()" novalidate>
+		    
 			<div class="form-group">
 				<label for="first_name" class="col-sm-4 control-label">Імя</label>
 				<div class="col-sm-6">
@@ -18,17 +19,18 @@
 			<div class="form-group">
 				<label for="username" class="col-sm-4 control-label">Нік*</label>
 				<div class="col-sm-6">
-					<input type="text" class="form-control" name="username" ng-minlength=3 placeholder="Nick name" ng-model="reg.user.username" required>
+					<input type="text" class="form-control" name="username" ng-minlength=3 placeholder="Nick name" ng-change="reg.checkUsernameUniqueness()" ng-model="reg.user.username" required>
                     <div class="error-container text-danger" ng-show="(regform.username.$dirty && regform.username.$invalid) || (regform.submitted && regform.username.$invalid)">
                         <small class="error" ng-show="regform.username.$error.required">Please input a username</small>
                         <small class="error" ng-show="regform.username.$error.minlength">Your username is required to be at least 3 characters</small>
+                        <small ng-show="regform.username.$error.unique">Username has already been taken</small>
                     </div>
 				</div>
 			</div> 
 			 <div class="form-group">
 				<label for="password" class="col-sm-4 control-label">Пароль*</label>
 				<div class="col-sm-6">
-					<input type="password" class="form-control" id="password" name="password" ng-minlength=8 placeholder="Password" ng-model="reg.user.password" ng-minlength=8 required>
+					<input type="password" class="form-control" id="password" name="password" ng-minlength=8 placeholder="Password" ng-model="reg.user.password" required>
 				    <div class="error-container text-danger" ng-show="(regform.password.$dirty && regform.password.$invalid) || (regform.submitted && regform.password.$invalid)">
                         <small class="error" ng-show="regform.password.$error.required">Please input a password</small>
                         <small class="error" ng-show="regform.password.$error.minlength">Your password is required to be at least 8 characters</small>

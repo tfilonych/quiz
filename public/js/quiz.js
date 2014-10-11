@@ -38,29 +38,61 @@
 					app.username = undefined;
 				});
 			
-		};
-		
+        };
 	}]);
 	
 	app.controller("RegistrationController", ["$http", "$location", "$scope", function($http, $location, $scope){
+		var reg = this;
 		this.user = {};
-		this.message = "";
+		this.alreadyTakenUsernames = [];
+		this.messages = [];
 		this.cancel = function(){
 			$location.path("/");
 		};
 		
 		this.checkPassword = function () {
-               $scope.regform.password_confirmation.$error.dontMatch = $scope.regform.password.$viewValue !== $scope.regform.password_confirmation.$viewValue;
-		};
+		    var passwordField = $scope.regform.password;
+		    var confirmationField = $scope.regform.password_confirmation;
+		    if (confirmationField.$error.required){
+                confirmationField.$setValidity('dontMatch', true);
+                return;
+            }
+            if (confirmationField.$viewValue == passwordField.$viewValue){
+                confirmationField.$setValidity('dontMatch', true);
+            } else {
+                confirmationField.$setValidity('dontMatch', false);
+            }
+        };
+             
 		this.submitRegistration = function(){
+		    this.messages = [];
             $scope.regform.submitted = false;
             if ($scope.regform.$valid) {
+             // if (true) {  
                 $http.post("/register", this.user)
                     .success(function(data){
                         $location.path("/");	
-                    });
+                    })
+                .error(function(response, status, headers, config){
+                    if (!!response.username && response.username.indexOf('has already been taken') !== -1){
+                        reg.alreadyTakenUsernames.push(reg.user.username);
+                        reg.checkUsernameUniqueness();
+                    } 
+                });             
             } else {
                 $scope.regform.submitted = true;
+            }
+        };
+        this.checkUsernameUniqueness = function(){
+            var usernameField = $scope.regform.username;
+            if (usernameField.$error.required || usernameField.$error.minlength){
+                usernameField.$setValidity('unique', true);
+                return;
+            }
+            if (this.alreadyTakenUsernames.indexOf(usernameField.$viewValue) === -1){
+                usernameField.$setValidity('unique', true);
+            } else {
+                usernameField.$setValidity('unique', false);
             }
         };
 	}]);
