@@ -1,10 +1,10 @@
-<div class="container-fluid">
+<div class="container-fluid" ng-init="cab.copyAppUser(appCtrl.user)">
     <div class="col-md-1"></div>
     <div class="inner-wraper container col-md-10">
         <div class="row form-group">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pageTitleBox bg-primary">
                 <div class="center-block">
-                    <h3 class="pageTitle text-center">Особистий кабінет {{appCtrl.user.first_name}}</h3>
+                    <h3 class="pageTitle text-center">Особистий кабінет {{cab.user.first_name}}</h3>
                 </div>
             </div>
         </div>

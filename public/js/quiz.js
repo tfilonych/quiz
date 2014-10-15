@@ -22,11 +22,13 @@
 		$http.get("/access")
 			.success(function(data){
 				app.user = data;
+				$scope.$broadcast("user_updated", data);
 			}).error(function(){
 				app.user = {};
 			});
 		$scope.$on("user_logged_in", function(event, data){
 			app.user = data;
+			$scope.$broadcast("user_updated", data);
 		});
 			
 		this.userLoggedIn = function(){
@@ -41,18 +43,32 @@
 	}]);
 	
 	app.controller("ProfileController", ["$http", function($http){
+	    this.editable = false;
+	    this.edit = function(){
+	        this.editable = true;
+	    };
 	}]);
 	
-	app.controller("CabinetController", function(){
+	app.controller("CabinetController", ["$scope", function($scope){
+	    var cabinet = this;
 	    this.tabs = ['Опубліковані', 'Недоопрацьовані', 'Незатверджені', 'Створені', 'Мій профіль'];
 	    this.tab = this.tabs[0];
-	    this.setTab = function(selected){
-	      this.tab = selected;  
+	    this.user = {};
+	    $scope.$on("user_updated", function(event, data){
+	        console.log('YEY!');
+	        cabinet.copyAppUser(data);
+	    });
+	    this.copyAppUser = function(user){
+	       angular.copy(user, this.user);
 	    };
+	    this.setTab = function(selected){
+	      this.tab = selected;    
+	    };
+	    
 	    this.isSelected = function(givenTab){
 	      return givenTab === this.tab;
 	    };
-	});
+	}]);
 	
 	app.controller("RegistrationController", ["$http", "$location", "$scope", function($http, $location, $scope){
 		var reg = this;
@@ -158,7 +174,7 @@
 	       restrict: "E",
 	       templateUrl: "templates/profile.html",
            controller: "ProfileController",
-           controllerAs: "prof"  
+           controllerAs: "profile"  
 	   }; 
 	});
 	
