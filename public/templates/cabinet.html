@@ -1,0 +1,28 @@
+<div class="container-fluid">
+    <div class="col-md-1"></div>
+    <div class="inner-wraper container col-md-10">
+        <div class="row form-group">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pageTitleBox bg-primary">
+                <div class="center-block">
+                    <h3 class="pageTitle text-center">Особистий кабінет {{appCtrl.user.first_name}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="input-group col-md-2">
+                <input type="text" class="form-control" placeholder="Пошук">
+                <a href="/search" class="input-group-addon btn btn-default"><span class="glyphicon glyphicon-search"> </span></a>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li ng-repeat="tab in cab.tabs" ng-class="{active: cab.isSelected(tab)}">
+                <a ng-click="cab.setTab(tab)"  class="bg-success">{{tab}}</a>
+            </li>
+        </ul>
+        <created-tests> </created-tests>
+        <not-approved-tests> </not-approved-tests>
+        <published-tests> </published-tests>
+        <unfinished-tests> </unfinished-tests>
+        <profile> </profile>
+    </div>
+</div>

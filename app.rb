@@ -33,7 +33,7 @@ end
 get '/access' do
   if session[:user_id]
     user = User.find(session[:user_id])
-    return [200, user.username]
+    return [200, user.attributes.to_json]
   end
   return [401, "unauthorized"]
 end
@@ -45,7 +45,7 @@ post '/login' do
     if data['remember']
        session[:user_id] = user.id
     end
-    return [200, user.username]
+    return [200, user.attributes.to_json]
   end
     return [401, "unauthorized"]
 end

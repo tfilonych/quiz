@@ -9,37 +9,50 @@
 	    	.when('/contacts', {templateUrl: '/templates/contacts.html'})
 	    	.when('/statistics', {templateUrl: '/templates/statistics.html'})
 	    	.when('/registration', {templateUrl: '/templates/registration.html', controller: "RegistrationController", controllerAs: "reg"})
+	      	.when('/cabinet', {templateUrl: '/templates/cabinet.html', controller: "CabinetController", controllerAs: "cab"})
 	      	.otherwise({redirectTo: '/'});
 	}]);
   
 	app.controller("NavigationController", function(){
-		
 	});
 	
 	app.controller("ApplicationController", ["$http", "$scope", function($http, $scope){
 		var app = this;
-		this.username = "";
+		this.user = {};
 		$http.get("/access")
 			.success(function(data){
-				app.username = data;
+				app.user = data;
 			}).error(function(){
-				app.username = undefined;
+				app.user = {};
 			});
 		$scope.$on("user_logged_in", function(event, data){
-			app.username = data;
+			app.user = data;
 		});
 			
 		this.userLoggedIn = function(){
-			return (this.username != "") && (this.username != undefined);
+			return !!this.user.username;
 		};
 		this.logout = function(){
 			$http.get("/logout")
 				.success(function(data){
-					app.username = undefined;
+					app.user = {};
 				});
-			
         };
 	}]);
+	
+	app.controller("ProfileController", ["$http", function($http){
+	}]);
+	
+	app.controller("CabinetController", function(){
+	    this.tabs = ['Опубліковані', 'Недоопрацьовані', 'Незатверджені', 'Створені', 'Мій профіль'];
+	    this.tab = this.tabs[0];
+	    this.setTab = function(selected){
+	      this.tab = selected;  
+	    };
+	    this.isSelected = function(givenTab){
+	      return givenTab === this.tab;
+	    };
+	});
 	
 	app.controller("RegistrationController", ["$http", "$location", "$scope", function($http, $location, $scope){
 		var reg = this;
@@ -140,4 +153,41 @@
 		};
 	});
 	
+	app.directive("profile", function(){
+	   return {
+	       restrict: "E",
+	       templateUrl: "templates/profile.html",
+           controller: "ProfileController",
+           controllerAs: "prof"  
+	   }; 
+	});
+	
+	app.directive("createdTests", function(){
+       return {
+           restrict: "E",
+           templateUrl: "templates/created_tests.html",
+       }; 
+    });
+    
+    app.directive("publishedTests", function(){
+       return {
+           restrict: "E",
+           templateUrl: "templates/published_tests.html",
+       }; 
+    });
+    
+    app.directive("notApprovedTests", function(){
+       return {
+           restrict: "E",
+           templateUrl: "templates/not_approved_tests.html",
+       }; 
+    });
+    
+    app.directive("unfinishedTests", function(){
+       return {
+           restrict: "E",
+           templateUrl: "templates/unfinished_tests.html",
+       }; 
+    });
+    
 })();
