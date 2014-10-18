@@ -1,82 +1,66 @@
-<div ng-show="cab.isSelected(cab.tabs[4])" class="row col-md-12">
+<div ng-show="cab.isSelected(cab.tabs[4])" class="row col-md-12" ng-init="profile.user=cab.user">
     <div class="col-md-3"></div>
     <div class="col-md-2">
         Picture
     </div>
-    <div class="col-md-4 container">
-            <div class="row">
-                <div class="col-md-6 text-right"><strong>First Name</strong></div>
-                <div class="col-md-6">
-                    <div class="form-inline" >
-                        <input type="text" ng-model="cab.user.first_name" class="form-control input-sm" ng-show="profile.editable">
-                    </div>
-                    <p ng-hide="profile.editable">{{cab.user.first_name}}
-                    </p>
+    <div class="col-md-4 form-horizontal">
+            <div class="form-group">
+                <div class="col-md-5 text-right"><strong>First Name</strong></div>
+                <div class="col-md-7">
+                    <input type="text" ng-model="profile.user.first_name" class="form-control" ng-show="profile.editable">
+                    <p ng-hide="profile.editable">{{profile.user.first_name}}</p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 text-right"><strong>Last Name</strong></div>
-                <div class="col-md-6">
-                    <div class="form-inline" >
-                        <input type="text" ng-model="cab.user.last_name" class="form-control input-sm" ng-show="profile.editable">
-                    </div>
-                    <p ng-hide="profile.editable">{{cab.user.last_name}}
-                    </p>
+            <div class="form-group">
+                <div class="col-md-5 text-right"><strong>Last Name</strong></div>
+                <div class="col-md-7">
+                    <input type="text" ng-model="profile.user.last_name" class="form-control" ng-show="profile.editable">
+                    <p ng-hide="profile.editable">{{profile.user.last_name}}</p>
                 </div>
             </div>
-              <div class="row">
-                <div class="col-md-6 text-right"><strong>Email</strong></div>
-                <div class="col-md-6">
-                    <div class="form-inline" >
-                        <input type="text" ng-model="cab.user.email" class="form-control input-sm" ng-show="profile.editable">
-                    </div>
-                    <p ng-hide="profile.editable">{{cab.user.email}} </p>
+              <div class="form-group">
+                <div class="col-md-5 text-right"><strong>Email</strong></div>
+                <div class="col-md-7">
+                    <input type="text" ng-model="profile.user.email" class="form-control" ng-show="profile.editable">
+                    <p ng-hide="profile.editable">{{profile.user.email}}</p>
                 </div>
             </div>
-             <div class="row">
-                <div class="col-md-6 text-right"><strong>Birthday</strong></div>
-                <div class="col-md-6">
-                    <div class="form-inline" >
-                        <input type="date" ng-model="cab.user.birthday" class="form-control input-sm" ng-show="profile.editable">
-                    </div>
-                    <p ng-hide="profile.editable">{{cab.user.birthday}} </p>
+             <div class="form-group">
+                <div class="col-md-5 text-right"><strong>Birthday</strong></div>
+                <div class="col-md-7">
+                    <input type="date" ng-model="profile.user.birthday" class="form-control" ng-show="profile.editable">
+                    <p ng-hide="profile.editable">{{profile.user.birthday | date: "MMM dd, yyyy"}}</p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 text-right"><strong>Plast hovel</strong></div>
-                <div class="col-md-6">
-                    <div class="form-inline" >
-                        <input type="text" ng-model="cab.user.plast_hovel" class="form-control input-sm" ng-show="profile.editable">
-                    </div>
-                    <p ng-hide="profile.editable">{{cab.user.plast_hovel}} </p>
+            <div class="form-group">
+                <div class="col-md-5 text-right"><strong>Plast hovel</strong></div>
+                <div class="col-md-7">
+                    <input type="text" ng-model="profile.user.plast_hovel" class="form-control" ng-show="profile.editable">
+                    <p ng-hide="profile.editable">{{profile.user.plast_hovel}}</p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 text-right"><strong>Plast region</strong></div>
-                <div class="col-md-6">
-                    <div class="form-inline" >
-                        <input type="text" ng-model="cab.user.plast_region" class="form-control input-sm" ng-show="profile.editable">
-                    </div>
-                    <p ng-hide="profile.editable">{{cab.user.plast_region}} </p>
+            <div class="form-group">
+                <div class="col-md-5 text-right"><strong>Plast region</strong></div>
+                <div class="col-md-7">
+                    <input type="text" ng-model="profile.user.plast_region" class="form-control" ng-show="profile.editable">
+                    <p ng-hide="profile.editable">{{profile.user.plast_region}}</p>
                 </div>
             </div>
-             <div class="row">
-                <div class="col-md-6 text-right"><strong>Plast level</strong></div>
-                <div class="col-md-6">
-                    <div class="form-inline" >
-                        <select class="form-control" id="plast_level" ng-model="cab.user.plast_level" class="form-control input-sm" ng-show="profile.editable">
+             <div class="form-group">
+                <div class="col-md-5 text-right"><strong>Plast level</strong></div>
+                <div class="col-md-7">
+                    <select class="form-control" id="plast_level" ng-model="profile.user.plast_level" class="form-control" ng-show="profile.editable">
                         <option value="початківець">Початківець</option>
                         <option value="досвідчений">Досвідчений</option>
                         <option value="експерт">Експерт</option>
                     </select>
-                    </div>
-                    <p ng-hide="profile.editable">{{cab.user.plast_level}} </p>
+                    <p ng-hide="profile.editable">{{profile.user.plast_level}}</p>
                 </div>
             </div>
         <div class="row col-md-12">
             <button type="button" class="btn btn-primary" ng-click="profile.edit()" ng-hide="profile.editable">Edit</button>
-            <button type="button" class="btn btn-success" ng-show="profile.editable">Save</button>
-            <button type="button" class="btn btn-danger" ng-show="profile.editable">Cancel</button>
+            <button type="button" class="btn btn-success" ng-show="profile.editable" ng-click="profile.saveEdit()">Save</button>
+            <button type="button" class="btn btn-danger" ng-show="profile.editable" ng-click="profile.cancelEdit()">Cancel</button>
             <button type="button" class="btn btn-danger" ng-hide="profile.editable">Delete profile</button>
         </div>
     </div>

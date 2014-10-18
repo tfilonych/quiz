@@ -20,13 +20,26 @@ get '/session' do
   return session.inspect
 end
 
-post '/register' do
+post '/user' do
   data = JSON.parse request.body.read
   user = User.new(data)
   if user.save
     return [200, "ok"]
   else
     return [400, user.errors.messages.to_json]
+  end
+end
+
+put '/user' do
+  data = JSON.parse request.body.read
+  filter = %w(first_name last_name email birthday plast_level plast_region plast_hovel)
+  data.delete_if{|key, value| !filter.include? key}
+  user = User.find(session[:user_id])
+  data.each{|key, value| user.send("#{key}=", value)}
+  if user.save
+    return [200, 'ok']
+  else
+    return [400, 'bad request']
   end
 end
 
@@ -38,7 +51,7 @@ get '/access' do
   return [401, "unauthorized"]
 end
 
-post '/login' do
+post '/access' do
   data = JSON.parse request.body.read
   user = User.authenticate(data['username'], data['password'])
   if !user.nil?
@@ -50,7 +63,7 @@ post '/login' do
     return [401, "unauthorized"]
 end
 
-get '/logout' do
+delete '/access' do
   session.clear
   return [200, "ok"]
 end

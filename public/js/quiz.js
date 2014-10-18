@@ -1,6 +1,21 @@
 (function(){
-	var app = angular.module("Quiz", ["ngRoute"]);
+	var app = angular.module("Quiz", ["ngRoute", "ngResource"]);
 	
+	app.factory('$access', ['$resource',
+        function($resource) {
+            return $resource('/access');
+               
+    }]);
+    
+    app.factory('$user', ['$resource',
+        function($resource) {
+            return $resource('/user', null,
+            {
+                'update': { method:'PUT' }
+            });
+               
+    }]);
+    
 	app.config(['$routeProvider', "$locationProvider", function($routeProvider, $locationProvider) {
 		$locationProvider.html5Mode(true);
 	    $routeProvider
@@ -16,16 +31,18 @@
 	app.controller("NavigationController", function(){
 	});
 	
-	app.controller("ApplicationController", ["$http", "$scope", function($http, $scope){
+	app.controller("ApplicationController", ["$scope", "$access", function($scope, $access){
 		var app = this;
 		this.user = {};
-		$http.get("/access")
-			.success(function(data){
-				app.user = data;
-				$scope.$broadcast("user_updated", data);
-			}).error(function(){
-				app.user = {};
-			});
+		$access.get(
+		    function(data){
+                app.user = data;
+                $scope.$broadcast("user_updated", data);
+            },
+		    function(){
+                app.user = {};
+            });
+            
 		$scope.$on("user_logged_in", function(event, data){
 			app.user = data;
 			$scope.$broadcast("user_updated", data);
@@ -35,18 +52,39 @@
 			return !!this.user.username;
 		};
 		this.logout = function(){
-			$http.get("/logout")
-				.success(function(data){
-					app.user = {};
-				});
+			$access.remove(null,
+                function(data){
+                   app.user = {};
+                });
         };
 	}]);
 	
-	app.controller("ProfileController", ["$http", function($http){
+	app.controller("ProfileController", ["$http", "$user", function($http, $user){
+	    this.user = {};
+	    
+	    this.previousUser = {};
 	    this.editable = false;
 	    this.edit = function(){
 	        this.editable = true;
+	        angular.copy(this.user, this.previousUser);
 	    };
+	    
+        this.cancelEdit = function(){
+            angular.copy(this.previousUser, this.user);
+            this.editable = false;
+             
+             
+        };
+        this.saveEdit = function(){
+            $user.update(this.user, 
+                    function(data){
+                        console.log("OK");    
+                    }, 
+                    function(response, status, headers, config){
+                        console.log("BAD");
+                });
+                 this.editable = false;
+        };
 	}]);
 	
 	app.controller("CabinetController", ["$scope", function($scope){
@@ -55,11 +93,12 @@
 	    this.tab = this.tabs[0];
 	    this.user = {};
 	    $scope.$on("user_updated", function(event, data){
-	        console.log('YEY!');
 	        cabinet.copyAppUser(data);
+	        
 	    });
 	    this.copyAppUser = function(user){
-	       angular.copy(user, this.user);
+	        angular.copy(user, this.user);
+	        this.user.birthday = new Date(this.user.birthday);
 	    };
 	    this.setTab = function(selected){
 	      this.tab = selected;    
@@ -70,7 +109,7 @@
 	    };
 	}]);
 	
-	app.controller("RegistrationController", ["$http", "$location", "$scope", function($http, $location, $scope){
+	app.controller("RegistrationController", ["$user", "$location", "$scope", function($user, $location, $scope){
 		var reg = this;
 		this.user = {};
 		this.alreadyTakenUsernames = [];
@@ -97,17 +136,16 @@
 		    this.messages = [];
             $scope.regform.submitted = false;
             if ($scope.regform.$valid) {
-             // if (true) {  
-                $http.post("/register", this.user)
-                    .success(function(data){
-                        $location.path("/");	
-                    })
-                .error(function(response, status, headers, config){
+                $user.save(this.user, 
+                    function(data){
+                        $location.path("/");    
+                    }, 
+                    function(response, status, headers, config){
                     if (!!response.username && response.username.indexOf('has already been taken') !== -1){
                         reg.alreadyTakenUsernames.push(reg.user.username);
                         reg.checkUsernameUniqueness();
                     } 
-                });             
+                });
             } else {
                 $scope.regform.submitted = true;
             }
@@ -126,7 +164,7 @@
         };
 	}]);
 	
-	app.controller("LoginController", ["$location", "$scope", "$http", function($location, $scope, $http){
+	app.controller("LoginController", ["$location", "$scope", "$access", function($location, $scope, $access){
 		var lgnCtrl = this;
 		this.user = {};
 		this.message = "";
@@ -134,15 +172,15 @@
 			if (!this.user.username || !this.user.password){
 				this.message = "Enter username and password!";
 			} else {
-				$http.post("/login", this.user)
-					.success(function(data){
-						$("#login").modal("hide");
-						$location.path("/");
-						$scope.$emit("user_logged_in", data);
-					})
-					.error(function(data){
-						lgnCtrl.message = "Invalid username and/or password!";
-					});
+				$access.save(this.user,
+				    function(data){
+                        $("#login").modal("hide");
+                        $location.path("/");
+                        $scope.$emit("user_logged_in", data);
+                    },
+				    function(data){
+                        lgnCtrl.message = "Invalid username and/or password!";
+                    });
 			}
 		};
 		this.register = function(){
