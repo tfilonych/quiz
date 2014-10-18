@@ -32,7 +32,7 @@ end
 
 put '/user' do
   data = JSON.parse request.body.read
-  filter = %w(first_name last_name email birthday plast_level plast_region plast_hovel)
+  filter = %w(first_name last_name email birthday plast_level plast_region plast_hovel picture)
   data.delete_if{|key, value| !filter.include? key}
   user = User.find(session[:user_id])
   data.each{|key, value| user.send("#{key}=", value)}
@@ -55,9 +55,7 @@ post '/access' do
   data = JSON.parse request.body.read
   user = User.authenticate(data['username'], data['password'])
   if !user.nil?
-    if data['remember']
-       session[:user_id] = user.id
-    end
+     session[:user_id] = user.id
     return [200, user.attributes.to_json]
   end
     return [401, "unauthorized"]
@@ -66,6 +64,18 @@ end
 delete '/access' do
   session.clear
   return [200, "ok"]
+end
+
+post '/avatar' do
+  if session[:user_id]
+    user = User.find(session[:user_id])
+    tempfile = params[:file][:tempfile]
+    filename = params[:file][:filename]
+    saved_name = "#{user.username}#{File.extname(filename)}"
+    FileUtils.copy(tempfile.path, "public/img/ava/#{saved_name}")
+    return [200, saved_name]
+  end
+  return [401, "unauthorized"]
 end
 
 not_found do

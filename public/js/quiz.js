@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module("Quiz", ["ngRoute", "ngResource"]);
+	var app = angular.module("Quiz", ["ngRoute", "ngResource", "flow"]);
 	
 	app.factory('$access', ['$resource',
         function($resource) {
@@ -16,7 +16,7 @@
                
     }]);
     
-	app.config(['$routeProvider', "$locationProvider", function($routeProvider, $locationProvider) {
+	app.config(['$routeProvider', "$locationProvider", "flowFactoryProvider", function($routeProvider, $locationProvider, flowFactoryProvider) {
 		$locationProvider.html5Mode(true);
 	    $routeProvider
 	    	.when('/', {templateUrl: '/templates/main.html'})
@@ -26,6 +26,11 @@
 	    	.when('/registration', {templateUrl: '/templates/registration.html', controller: "RegistrationController", controllerAs: "reg"})
 	      	.when('/cabinet', {templateUrl: '/templates/cabinet.html', controller: "CabinetController", controllerAs: "cab"})
 	      	.otherwise({redirectTo: '/'});
+	      	flowFactoryProvider.defaults = {
+                target: '/avatar',
+                permanentErrors: [404, 500, 501],
+                testChunks: false
+            };
 	}]);
   
 	app.controller("NavigationController", function(){
@@ -61,7 +66,7 @@
 	
 	app.controller("ProfileController", ["$http", "$user", function($http, $user){
 	    this.user = {};
-	    
+	    var profile = this; 
 	    this.previousUser = {};
 	    this.editable = false;
 	    this.edit = function(){
@@ -84,6 +89,26 @@
                         console.log("BAD");
                 });
                  this.editable = false;
+        };
+        
+        this.syncUserAvatar = function(){
+            console.log("shos tam");
+            $user.update({picture: this.user.picture}, 
+                function(data){
+                    console.log("saved picture");
+                },
+                function(response, status, headers, config){
+                        console.log("BAD");
+                });            
+        };
+        
+        this.saveAvatar = function(){
+            this.$flow.on('fileSuccess', function(file, response){
+                profile.$flow.off('fileSuccess');
+                profile.user.picture = response;
+                profile.syncUserAvatar();
+            });
+            this.$flow.upload();
         };
 	}]);
 	
