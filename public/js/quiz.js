@@ -106,6 +106,7 @@
             this.$flow.on('fileSuccess', function(file, response){
                 profile.$flow.off('fileSuccess');
                 profile.user.picture = response;
+                profile.$flow.cancel();
                 profile.syncUserAvatar();
             });
             this.$flow.upload();
