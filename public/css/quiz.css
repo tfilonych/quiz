@@ -43,3 +43,11 @@
 .profile-container {
 	margin-top: 20px;
 }
+
+.ng-invalid.ng-dirty {
+	border-color: red;
+}
+
+form.ng-submitted input.ng-invalid {
+	border-color: red;
+}

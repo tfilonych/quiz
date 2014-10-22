@@ -1,10 +1,9 @@
 (function(){
 	var app = angular.module("Quiz", ["ngRoute", "ngResource", "flow"]);
-	
+	app.constant("existUser", "has already been taken");
 	app.factory('$access', ['$resource',
         function($resource) {
             return $resource('/access');
-               
     }]);
     
     app.factory('$user', ['$resource',
@@ -12,8 +11,7 @@
             return $resource('/user', null,
             {
                 'update': { method:'PUT' }
-            });
-               
+            }); 
     }]);
     
 	app.config(['$routeProvider', "$locationProvider", "flowFactoryProvider", function($routeProvider, $locationProvider, flowFactoryProvider) {
@@ -29,7 +27,6 @@
 	      	flowFactoryProvider.defaults = {
                 target: '/avatar',
                 permanentErrors: [404, 500, 501],
-                testChunks: false
             };
 	}]);
   
@@ -77,9 +74,8 @@
         this.cancelEdit = function(){
             angular.copy(this.previousUser, this.user);
             this.editable = false;
-             
-             
         };
+        
         this.saveEdit = function(){
             $user.update(this.user, 
                     function(data){
@@ -119,7 +115,7 @@
 	    this.tab = this.tabs[0];
 	    this.user = {};
 	    $scope.$on("user_updated", function(event, data){
-	        cabinet.copyAppUser(data);
+	        cabinet.user = data;
 	        
 	    });
 	    this.copyAppUser = function(user){
@@ -135,29 +131,17 @@
 	    };
 	}]);
 	
-	app.controller("RegistrationController", ["$user", "$location", "$scope", function($user, $location, $scope){
+	app.controller("RegistrationController", ["$user", "$location", "$scope", "userValidationService", "existUser", function($user, $location, $scope, $userValidation, existUser){
 		var reg = this;
+		this.validation = new $userValidation($scope);
+		this.emailPattern = /^[\w+\.]?\w+@\w+\.[a-z]{2,4}$/;
 		this.user = {};
 		this.alreadyTakenUsernames = [];
-		this.messages = [];
+		this.messages = "";
 		this.cancel = function(){
 			$location.path("/");
 		};
 		
-		this.checkPassword = function () {
-		    var passwordField = $scope.regform.password;
-		    var confirmationField = $scope.regform.password_confirmation;
-		    if (confirmationField.$error.required){
-                confirmationField.$setValidity('dontMatch', true);
-                return;
-            }
-            if (confirmationField.$viewValue == passwordField.$viewValue){
-                confirmationField.$setValidity('dontMatch', true);
-            } else {
-                confirmationField.$setValidity('dontMatch', false);
-            }
-        };
-             
 		this.submitRegistration = function(){
 		    this.messages = [];
             $scope.regform.submitted = false;
@@ -166,28 +150,16 @@
                     function(data){
                         $location.path("/");    
                     }, 
-                    function(response, status, headers, config){
-                    if (!!response.username && response.username.indexOf('has already been taken') !== -1){
-                        reg.alreadyTakenUsernames.push(reg.user.username);
-                        reg.checkUsernameUniqueness();
-                    } 
+                    function(response){
+                        if (!!response.data.username && response.data.username.indexOf(existUser) !== -1){
+                            reg.validation.addTakenUser(reg.user.username);
+                        }
                 });
             } else {
                 $scope.regform.submitted = true;
             }
         };
-        this.checkUsernameUniqueness = function(){
-            var usernameField = $scope.regform.username;
-            if (usernameField.$error.required || usernameField.$error.minlength){
-                usernameField.$setValidity('unique', true);
-                return;
-            }
-            if (this.alreadyTakenUsernames.indexOf(usernameField.$viewValue) === -1){
-                usernameField.$setValidity('unique', true);
-            } else {
-                usernameField.$setValidity('unique', false);
-            }
-        };
+       
 	}]);
 	
 	app.controller("LoginController", ["$location", "$scope", "$access", function($location, $scope, $access){

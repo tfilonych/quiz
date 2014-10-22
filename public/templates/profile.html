@@ -4,7 +4,7 @@
         <div class="col-md-6" flow-init="{singleFile:true}" flow-name="profile.$flow">
          <img class="thumbnail profile-avatar" ng-src="img/ava/{{profile.user.picture || 'no_avatar.png'}}" flow-img="$flow.files[0]" />
             <div class="btn button-group row col-md-6">
-                <button type="button" class="btn btn-default" flow-btn ng-click="profile.changeAvatar()" ng-hide="profile.change">Change</button>
+                <button type="button" class="btn btn-default" flow-btn ng-click="profile.changeAvatar()" >Change</button>
                 <button type="button" class="btn btn-primary" ng-show="$flow.files.length" ng-click="profile.saveAvatar()">Save</button>
             </div>
         </div>
